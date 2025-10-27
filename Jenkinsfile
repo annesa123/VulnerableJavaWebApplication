@@ -15,14 +15,11 @@ pipeline {
                 script {
                     // ambil lokasi tool dari konfigurasi global Jenkins
                     def dcHome = tool 'DependencyCheck'
-                    sh """
-                        ${dcHome}/bin/dependency-check.sh \
-                        --project "MyProject" \
-                        --scan "." \
-                        --format "ALL" \
-                        --out "${REPORT_DIR}"
-                        --nvdApiKey ${NVD_API_KEY}
-                    """
+                    sh([
+                       script: "${dcHome}/bin/dependency-check.sh --project MyProject --scan . --format ALL --out ${REPORT_DIR} --nvdApiKey ${NVD_API_KEY}",
+                       returnStatus: false,
+                       label: 'Dependency Check'
+                    ])
                 }
             }
         }
