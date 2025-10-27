@@ -1,7 +1,7 @@
 pipeline {
     agent { label 'built-in' }
     tools {
-        dependencyCheck 'DependencyCheck'  
+    'dependency-check' 'DependencyCheck'
     }
 
     environment {
