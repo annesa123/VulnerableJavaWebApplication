@@ -1,38 +1,43 @@
 pipeline {
     agent { label 'built-in' }
+    tools {
+        dependencyCheck 'DependencyCheck'  
+    }
 
     environment {
         REPORT_DIR = "dependency-check-report"
-        DEP_DATA = "depcheck-data"
-        DEPENDENCY_CHECK_IMAGE = "owasp/dependency-check:latest"
         NVD_API_KEY = credentials('NVD_API_KEY')
     }
 
     stages {
-        stage('Dependency Check') {
+        stage('Run OWASP Dependency-Check') {
             steps {
-                sh '''
-                    echo "=== Jalankan OWASP Dependency Check (pakai cache di workspace) ==="
-                    mkdir -p $REPORT_DIR
-                    mkdir -p $DEP_DATA
-                    docker run --rm \
-                        -e NVD_API_KEY=$NVD_API_KEY \
-                        -v $(pwd):/src \
-                        -v $(pwd)/$REPORT_DIR:/report \
-                        -v $(pwd)/$DEP_DATA:/usr/share/dependency-check/data \
-                        $DEPENDENCY_CHECK_IMAGE \
-                        --project "MyApp" \
-                        --scan /src \
-                        --format ALL \
-                        --out /report || true
-                '''
+                script {
+                    // ambil lokasi tool dari konfigurasi global Jenkins
+                    def dcHome = tool 'DependencyCheck'
+                    sh """
+                        ${dcHome}/bin/dependency-check.sh \
+                        --project "MyProject" \
+                        --scan "." \
+                        --format "ALL" \
+                        --out "${REPORT_DIR}"
+                        --nvdApiKey ${NVD_API_KEY}
+                    """
+                }
             }
         }
-    }
 
-    post {
-        always {
-            archiveArtifacts artifacts: 'dependency-check-report/*.*', fingerprint: true
+        stage('Publish Report') {
+            steps {
+                publishHTML([
+                    reportDir: "${REPORT_DIR}",
+                    reportFiles: 'dependency-check-report.html',
+                    reportName: 'Dependency Check Report',
+                    allowMissing: false,
+                    keepAll: true,
+                    alwaysLinkToLastBuild: true
+                ])
+            }
         }
     }
 }
