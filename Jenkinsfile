@@ -4,17 +4,20 @@ pipeline {
     environment {
         REPORT_DIR = "dependency-check-report"
         DEPENDENCY_CHECK_IMAGE = "owasp/dependency-check:latest"
+        NVD_API_KEY = credentials('NVD_API_KEY')
     }
         
     stages {
         stage('Dependency Check') {
             steps {
                 sh '''
-                    echo "=== Jalankan OWASP Dependency Check (All Formats) ==="
+                    echo "=== Jalankan OWASP Dependency Check (Dengan NVD API Key) ==="
                     mkdir -p $REPORT_DIR
                     docker run --rm \
+                        -e NVD_API_KEY=$NVD_API_KEY \
                         -v $(pwd):/src \
                         -v $(pwd)/$REPORT_DIR:/report \
+                        -v /var/jenkins_home/depcheck-data:/usr/share/dependency-check/data \
                         $DEPENDENCY_CHECK_IMAGE \
                         --project "MyApp" \
                         --scan /src \
