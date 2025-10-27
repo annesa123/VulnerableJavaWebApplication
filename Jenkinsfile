@@ -6,20 +6,28 @@ pipeline {
 
     environment {
         REPORT_DIR = "dependency-check-report"
-        NVD_API_KEY = credentials('NVD_API_KEY')
     }
 
-    stages {
+   stages {
         stage('Run OWASP Dependency-Check') {
             steps {
                 script {
-                    // ambil lokasi tool dari konfigurasi global Jenkins
-                    def dcHome = tool 'DependencyCheck'
-                    sh([
-                       script: "${dcHome}/bin/dependency-check.sh --project MyProject --scan . --format ALL --out ${REPORT_DIR} --nvdApiKey ${NVD_API_KEY}",
-                       returnStatus: false,
-                       label: 'Dependency Check'
-                    ])
+                    // Ambil tool Dependency-Check dari konfigurasi global
+                    def dcHome = tool name: 'DependencyCheck', type: 'org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation'
+                    if (!dcHome) {
+                        error "Dependency-Check tool not found. Pastikan sudah dikonfigurasi di Manage Jenkins → Tools."
+                    }
+
+                    withCredentials([string(credentialsId: 'NVD_API_KEY', variable: 'API_KEY')]) {
+                        sh """
+                            "${dcHome}/bin/dependency-check.sh" \
+                            --project "MyProject" \
+                            --scan "." \
+                            --format "ALL" \
+                            --out "${REPORT_DIR}" \
+                            --nvdApiKey \$API_KEY
+                        """
+                    }
                 }
             }
         }
