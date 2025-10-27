@@ -4,6 +4,7 @@ pipeline {
     environment {
         REPORT_DIR = "dependency-check-report"
         DEPENDENCY_CHECK_IMAGE = "owasp/dependency-check:latest"
+    }
         
     stages {
         stage('Dependency Check') {
