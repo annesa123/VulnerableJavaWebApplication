@@ -19,7 +19,8 @@ pipeline {
                         --format "ALL" \
                         --out "${REPORT_DIR}" \
                         --nvdApiKey \$API_KEY \
-                        --data "dependency-check-data"
+                        --data "dependency-check-data" \
+                        --disableOssIndex true
                     """
                 }
             }
