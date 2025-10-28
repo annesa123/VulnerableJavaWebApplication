@@ -22,7 +22,7 @@ pipeline {
                         --data "dependency-check-data" \
                         --disableOssIndex true \
                         --failOnCVSS 0.0
-                    """|| true //
+                    """
                 }
                 archiveArtifacts artifacts: 'dependency-check-report/dependency-check-report.html'
                 archiveArtifacts artifacts: 'dependency-check-report/dependency-check-report.json'
