@@ -21,7 +21,7 @@ pipeline {
                         --nvdApiKey \$API_KEY \
                         --data "dependency-check-data" \
                         --disableOssIndex true \
-                        --failOnCVSS 0
+                        --failOnCVSS 0.0
                     """
                 }
             }
