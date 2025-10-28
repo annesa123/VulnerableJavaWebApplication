@@ -24,9 +24,9 @@ pipeline {
                         --failOnCVSS 0.0
                     """
                 }
-                archiveArtifacts artifacts: 'dependency-check-report/dependency-check-report.html'
-                archiveArtifacts artifacts: 'dependency-check-report/dependency-check-report.json'
-                archiveArtifacts artifacts: 'dependency-check-report/dependency-check-report.xml'
+                archiveArtifacts artifacts: "${REPORT_DIR}/dependency-check-report.html"
+                archiveArtifacts artifacts: "${REPORT_DIR}/dependency-check-report.json"
+                archiveArtifacts artifacts: "${REPORT_DIR}/dependency-check-report.xml"
             }
         }
     }
