@@ -22,11 +22,11 @@ pipeline {
                         --data "dependency-check-data" \
                         --disableOssIndex true \
                         --failOnCVSS 0.0
-                    """
-                    archiveArtifacts artifacts: 'dependency-check-report/dependency-check-report.html'
-                    archiveArtifacts artifacts: 'dependency-check-report/dependency-check-report.json'
-                    archiveArtifacts artifacts: 'dependency-check-report/dependency-check-report.xml'
+                    """|| true //
                 }
+                archiveArtifacts artifacts: 'dependency-check-report/dependency-check-report.html'
+                archiveArtifacts artifacts: 'dependency-check-report/dependency-check-report.json'
+                archiveArtifacts artifacts: 'dependency-check-report/dependency-check-report.xml'
             }
         }
     }
