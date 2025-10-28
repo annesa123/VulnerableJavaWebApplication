@@ -23,20 +23,10 @@ pipeline {
                         --disableOssIndex true \
                         --failOnCVSS 0.0
                     """
+                    archiveArtifacts artifacts: 'dependency-check-report/dependency-check-report.html'
+                    archiveArtifacts artifacts: 'dependency-check-report/dependency-check-report.json'
+                    archiveArtifacts artifacts: 'dependency-check-report/dependency-check-report.xml'
                 }
-            }
-        }
-
-        stage('Publish Report') {
-            steps {
-                publishHTML([
-                    reportDir: "${REPORT_DIR}",
-                    reportFiles: 'dependency-check-report.html',
-                    reportName: 'Dependency Check Report',
-                    allowMissing: false,
-                    keepAll: true,
-                    alwaysLinkToLastBuild: true
-                ])
             }
         }
     }
