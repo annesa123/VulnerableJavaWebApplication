@@ -18,7 +18,8 @@ pipeline {
                         --scan "." \
                         --format "ALL" \
                         --out "${REPORT_DIR}" \
-                        --nvdApiKey \$API_KEY
+                        --nvdApiKey \$API_KEY \
+                        --data "dependency-check-data"
                     """
                 }
             }
