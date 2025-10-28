@@ -8,34 +8,18 @@ pipeline {
         REPORT_DIR = "dependency-check-report"
     }
 
-   stages {
-        stage('Prepare Tools') {
-            steps {
-                script {
-                    def dcHome = tool name: 'DependencyCheck', type: 'org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation'
-                    echo "Dependency-Check tool path: ${dcHome}"
-                }
-            }
-        }
-
+    stages {
         stage('Run OWASP Dependency-Check') {
             steps {
-                script {
-                    def dcHome = tool name: 'DependencyCheck', type: 'org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation'
-                    if (!dcHome) {
-                        error "Dependency-Check tool not found. Pastikan sudah dikonfigurasi di Manage Jenkins → Tools."
-                    }
-
-                    withCredentials([string(credentialsId: 'NVD_API_KEY', variable: 'API_KEY')]) {
-                        sh """
-                            "${dcHome}/bin/dependency-check.sh" \
-                            --project "VulnerableJavaWebApplication" \
-                            --scan "." \
-                            --format "ALL" \
-                            --out "${REPORT_DIR}" \
-                            --nvdApiKey \$API_KEY
-                        """
-                    }
+                withCredentials([string(credentialsId: 'NVD_API_KEY', variable: 'API_KEY')]) {
+                    sh """
+                        dependency-check \
+                        --project "VulnerableJavaWebApplication" \
+                        --scan "." \
+                        --format "ALL" \
+                        --out "${REPORT_DIR}" \
+                        --nvdApiKey \$API_KEY
+                    """
                 }
             }
         }
